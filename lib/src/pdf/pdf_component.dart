@@ -32,9 +32,8 @@ import '../routes.dart';
 class PdfComponent implements OnActivate {
   final DeckService _deckService;
   final AssetService _assetService;
-  final DomSanitizationService _sanitizationService;
-  PdfComponent(
-      this._deckService, this._assetService, this._sanitizationService);
+
+  PdfComponent(this._deckService, this._assetService);
 
   SafeResourceUrl iframeUrl;
   int cardsLoaded = 0;
@@ -45,24 +44,20 @@ class PdfComponent implements OnActivate {
 
   TextStyle title;
   TextStyle typeLine;
+  TextStyle id;
   TextStyle cardText;
   TextStyle keyword;
   TextStyle statsLine;
 
-  static final double mm = PdfPageFormat.cm / 10;
-  static final double pageHeight = 297 * mm;
-  static final double pageWidth = 210 * mm;
+  static const double mm = PdfPageFormat.mm;
 
-  static final int hCards = 3;
-  static final int vCards = 3;
-  static final int pCards = hCards * vCards;
+  static const String pdfName = "Hexal Deck";
+  static const double pageHeight = 297 * mm;
+  static const double pageWidth = 210 * mm;
+  static const double cardHeight = 3.5 * PdfPageFormat.inch;
+  static const double cardWidth = 2.5 * PdfPageFormat.inch;
 
-  static final double cardWidth = pageWidth / hCards;
-  static final double cardHeight = pageHeight / vCards;
-
-  String pdfName = "Card Game Name Deck";
-  PdfPageFormat format =
-      PdfPageFormat(pageWidth, pageHeight, marginAll: 15 * mm);
+  static const PdfPageFormat format = PdfPageFormat(pageWidth, pageHeight);
 
   @override
   void onActivate(_, RouterState current) async {
@@ -85,8 +80,6 @@ class PdfComponent implements OnActivate {
 
     String url = Url.createObjectUrlFromBlob(b);
 
-    window.open(url, "PDF");
-
     AnchorElement link = AnchorElement()
       ..href = url
       ..download = 'hexal_deck.pdf'
@@ -100,94 +93,145 @@ class PdfComponent implements OnActivate {
   Future<Document> buildPdf(List<Card> cards) async {
     pdf = Document(title: pdfName);
     Font firaRegular = await getFont("assets/fonts/FiraSans-Regular.ttf");
+    Font firaSemiBold = await getFont("assets/fonts/FiraSans-SemiBold.ttf");
     Font firaBold = await getFont("assets/fonts/FiraSans-Bold.ttf");
 
-    title = TextStyle(font: firaBold, fontSize: 10);
-    typeLine = TextStyle(font: firaBold, fontSize: 8);
-    cardText = TextStyle(font: firaRegular, lineSpacing: 2, fontSize: 8);
-    keyword = TextStyle(font: firaBold, lineSpacing: 2, fontSize: 8);
+    title = TextStyle(font: firaRegular, fontSize: 12);
+    typeLine = TextStyle(font: firaRegular, fontSize: 8);
+    id = TextStyle(font: firaRegular, fontSize: 7);
+    cardText = TextStyle(font: firaRegular, lineSpacing: 1, fontSize: 7);
+    keyword = TextStyle(font: firaSemiBold, lineSpacing: 1, fontSize: 7);
     statsLine = TextStyle(font: firaBold, fontSize: 14);
 
-    List<Future<Container>> c = cards.map((card) {
-      return buildCard(card);
-    }).toList();
-    Future<List<Container>> futures = Future.wait(c);
-    List<Container> cardContainers =
-        List<Container>.from(await futures, growable: true);
+    List<Widget> cardWidgets = List.from(
+        await Future.wait(
+          List<Future<Widget>>.generate(cards.length, (int i) {
+            return buildCard(cards[i]);
+          }),
+        ),
+        growable: true);
 
-    while (cardContainers.length % pCards != 0) {
-      cardContainers.add(Container());
+    while (cardWidgets.length % 9 != 0) {
+      cardWidgets.add(
+        SizedBox(
+          height: cardHeight,
+          width: cardWidth,
+        ),
+      );
     }
-    int pages = (cardContainers.length / pCards).ceil();
+
+    int pages = (cardWidgets.length / 9).ceil();
     for (int p = 0; p < pages; p++) {
-      Iterable<Container> pageCards =
-          cardContainers.skip(p * pCards).take(pCards);
-      pdf.addPage(Page(
+      Iterable<Widget> pageCards = cardWidgets.skip(p * 9).take(9);
+      pdf.addPage(
+        Page(
           pageFormat: format,
-          build: (Context context) => GridView(
-              direction: Axis.vertical,
-              crossAxisCount: hCards,
-              children: pageCards.toList())));
+          build: (Context context) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: pageCards.take(3).toList(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: pageCards.skip(3).take(3).toList(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: pageCards.skip(6).take(3).toList(),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
     }
     return pdf;
   }
 
-  Future<Container> buildCard(Card card) async {
-    Container result = await Container(
-        padding: EdgeInsets.all(2 * mm),
-        decoration: BoxDecoration(
-            border:
-                BoxBorder(left: true, right: true, top: true, bottom: true)),
-        child: Stack(children: [
-          Positioned(left: 0, top: 0, child: Text(card.name, style: title)),
-          Positioned(
-              right: 0,
-              top: 0,
-              child: LimitedBox(
-                  maxHeight: 6 * mm,
-                  maxWidth: 6 * mm,
-                  child: Image(await getImage(
-                      AssetService.elementImages[card.element])))),
-          Positioned(
-              left: 0,
-              right: 0,
-              top: 8 * mm,
+  Future<Widget> buildCard(Card card) async {
+    Widget foreground = Stack(
+      children: [
+        Positioned(
+            left: 1.9 * mm,
+            top: 2.6 * mm,
+            child: Text(card.name, style: title)),
+        Positioned(
+            left: 56 * mm,
+            top: 1.5 * mm,
+            child: SizedBox(
+                height: 6 * mm,
+                width: 6 * mm,
+                child: Image(
+                    await getImage(AssetService.elementImages[card.element])))),
+        Positioned(
+            left: 1 * mm,
+            top: 8 * mm,
+            child: SizedBox(
+              height: 45 * mm,
+              width: 61.5 * mm,
               child: Center(
-                  child: LimitedBox(
-                      maxHeight: 35 * mm,
-                      child: Image(
-                          await getImage(AssetService.cardImage(card.id)))))),
-          Positioned(
-              left: 2 * mm,
-              right: 2 * mm,
-              top: 46 * mm,
-              child: LimitedBox(
-                  maxHeight: 10 * mm,
-                  child: Text(card.typeLine, style: typeLine))),
-          Positioned(
-              top: 52 * mm,
-              left: 0,
-              right: 0,
-              child: await buildCardText(card.text)),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: await buildCostRow(card.cost))),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [Text(card.statsLine, style: statsLine)]))
-        ]));
+                child: Image(
+                  await getImage(AssetService.cardImage(card.setId, card.id)),
+                ),
+              ),
+            )),
+        Positioned(
+            left: 2 * mm,
+            top: 54.2 * mm,
+            child: Text(card.typeLine, style: typeLine)),
+        Positioned(
+          right: 2 * mm,
+          top: 54 * mm,
+          child: Text(card.cardIdText, style: id),
+        ),
+        Positioned(
+            left: 4.1 * mm,
+            top: 58.5 * mm,
+            child: SizedBox(
+                height: 24.1 * mm,
+                width: 55.4 * mm,
+                child: await buildCardText(card.text))),
+        Positioned(
+            left: 1.5 * mm,
+            bottom: 1.5 * mm,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: await buildCostRow(card.cost))),
+        Positioned(
+            right: 2 * mm,
+            bottom: 1.2 * mm,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [Text(card.statsLine, style: statsLine)]))
+      ],
+    );
+    Widget background = Image(
+      await getImage(AssetService.frameImages[card.element]),
+    );
+
     cardsLoaded += 1;
-    return result;
+
+    return SizedBox(
+      height: cardHeight,
+      width: cardWidth,
+      child: Stack(
+        children: [
+          background,
+          foreground,
+        ],
+      ),
+    );
   }
 
   // Simplified cost row
@@ -215,9 +259,9 @@ class PdfComponent implements OnActivate {
     Iterable<Future<List<Widget>>> a = cost.keys.map((key) async {
       List<Widget> result = List<Widget>();
       for (int i = 0; i < cost[key]; i++) {
-        result.add(LimitedBox(
-            maxHeight: 16,
-            maxWidth: 16,
+        result.add(SizedBox(
+            height: 4 * mm,
+            width: 4 * mm,
             child: Image(await getImage(AssetService.elementImages[key]))));
       }
       return result;
@@ -246,10 +290,17 @@ class PdfComponent implements OnActivate {
       }
       if (text[i] == "]") {
         if (i > p) {
-          result.add(WidgetSpan(
-              child: Image(await getImage(AssetService.elementImages[
-                  CardService.elementFromString(
-                      text.substring(p, i).toLowerCase())]))));
+          result.add(
+            WidgetSpan(
+              baseline: -0.3 * mm,
+              child: Image(
+                await getImage(
+                  AssetService.elementImages[CardService.elementFromString(
+                      text.substring(p, i).toLowerCase())],
+                ),
+              ),
+            ),
+          );
         }
         p = i + 1;
       }

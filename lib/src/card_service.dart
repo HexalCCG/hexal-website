@@ -8,43 +8,49 @@ import 'card.dart';
 class CardService {
   CardService(this._assetService);
   final AssetService _assetService;
-  List<Card> cardList;
+  Future<List<Card>> _cardList;
 
   Future<List<Card>> loadCards() async {
-    String csv = await _assetService.getCardData();
-    List<List<dynamic>> rows =
-        const CsvToListConverter().convert(csv).skip(1).toList();
+    List<String> data = await _assetService.loadAllSets();
+    List<Card> cards = List<Card>();
 
-    return rows.map((List<dynamic> rowData) {
-      return parseRowData(rowData);
-    }).toList();
+    for (int i = 0; i < data.length; i++) {
+      List<List<dynamic>> rows =
+          const CsvToListConverter().convert(data[i]).skip(1).toList();
+      cards.addAll(rows.map((List<dynamic> rowData) {
+        return parseRowData(rowData, i);
+      }));
+    }
+    return cards;
   }
 
   Future<List<Card>> getAll() async {
-    if (cardList == null) {
-      cardList = await loadCards();
+    if (_cardList == null) {
+      _cardList = loadCards();
     }
-    return cardList;
+    return _cardList;
   }
 
-  Future<Card> getById(int id) async {
+  Future<Card> getById(int setId, int id) async {
     List<Card> list = await getAll();
     return list.singleWhere((Card card) {
-      return card.id == id;
+      return card.id == id && card.setId == setId;
     });
   }
 
-  static Card parseRowData(List<dynamic> data) {
+  static Card parseRowData(List<dynamic> data, int setId) {
     return Card(
-        data[0],
-        data[1],
-        elementFromString(data[2].toLowerCase()),
-        typeFromString(data[3].toLowerCase()),
-        durationFromString(data[4].toLowerCase()),
-        costFromString(data[5]),
-        (data[6] == "") ? null : data[6],
-        (data[7] == "") ? null : data[7],
-        data[8]);
+        setId: setId,
+        id: data[0],
+        version: data[1],
+        name: data[2],
+        element: elementFromString(data[3].toLowerCase()),
+        type: typeFromString(data[4].toLowerCase()),
+        cardDuration: durationFromString(data[5].toLowerCase()),
+        cost: costFromString(data[6]),
+        attack: (data[7] == "") ? null : data[7],
+        health: (data[8] == "") ? null : data[8],
+        text: data[9]);
   }
 
   static String stringToElement(Element e) {
@@ -143,7 +149,7 @@ class CardService {
   static Map<Element, int> costFromString(String s) {
     Map<Element, int> result = Map<Element, int>();
     if (s != "") {
-      List<String> list = s.split(",");
+      List<String> list = s.split(".");
       list.forEach((item) {
         Element e = parseElementLetter(item.substring(item.length - 1));
         int n = int.parse(item.substring(0, item.length - 1));

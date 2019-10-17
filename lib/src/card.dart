@@ -1,29 +1,38 @@
 import 'package:open_card_game/src/asset_service.dart';
 import 'package:open_card_game/src/localisation.dart';
+import 'package:meta/meta.dart';
 
 enum Element { fire, earth, air, water, spirit, any }
 enum Type { creature, spell, item, hero, token }
 enum CardDuration { none, reaction, enchantment, equipment, field, permanent }
 
 class Card {
-  Card(this.id, this.name, this.element, this.type, this.cardDuration,
-      this.cost, this.attack, this.health, this.text) {
-    totalCost = cost.values.fold(0, (a, b) => a + b);
-  }
+  Card(
+      {@required this.setId,
+      @required this.id,
+      @required this.version,
+      @required this.name,
+      @required this.element,
+      @required this.type,
+      @required this.cardDuration,
+      @required this.cost,
+      @required this.attack,
+      @required this.health,
+      @required this.text})
+      : totalCost = cost.values.fold(0, (a, b) => a + b);
 
-  int id;
-  String name;
-  Element element;
-
-  Type type;
-  CardDuration cardDuration;
-
-  Map<Element, int> cost;
-  int totalCost;
-  int attack;
-  int health;
-
-  String text;
+  final int setId;
+  final int id;
+  final int version;
+  final String name;
+  final Element element;
+  final Type type;
+  final CardDuration cardDuration;
+  final Map<Element, int> cost;
+  final int totalCost;
+  final int attack;
+  final int health;
+  final String text;
 
   String get typeLine {
     String r;
@@ -49,7 +58,7 @@ class Card {
   }
 
   String get image {
-    return AssetService.cardImage(id);
+    return AssetService.cardImage(setId, id);
   }
 
   String get elementImage {
@@ -58,6 +67,15 @@ class Card {
 
   String get paddedId {
     return id.toString().padLeft(3, "0");
+  }
+
+  String get cardIdText {
+    return "[" +
+        setId.toString() +
+        "." +
+        paddedId +
+        "]" +
+        (version > 1 ? ("." + version.toString()) : "");
   }
 
   String get searchableText {

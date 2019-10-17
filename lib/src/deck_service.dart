@@ -18,7 +18,9 @@ class DeckService {
 
   String generateCode(Map<Card, int> deck) {
     String list = deck.keys.map((card) {
-      return card.id.toString() +
+      return card.setId.toString() +
+          "." +
+          card.id.toString() +
           ((deck[card] > 1) ? "x" + deck[card].toString() : "");
     }).join(",");
 
@@ -40,15 +42,18 @@ class DeckService {
     List<int> bytes = base64.decode(code);
     String s = utf8.decode(bytes);
 
-    Map<Card, int> r = Map<Card, int>();
+    Iterable<Future<MapEntry<Card, int>>> decodedCardsFutures =
+        s.split(",").map((String code) async {
+      List<String> splitNumber = code.split("x");
+      List<String> splitSet = splitNumber[0].split(".");
 
-    Iterable<Future<MapEntry<Card, int>>> p =
-        s.split(",").map((String a) async {
-      List<String> b = a.split("x");
-      int n = (b.length == 2) ? int.parse(b[1]) : 1;
-      Card c = await _cardService.getById(int.parse(b[0]));
-      return MapEntry<Card, int>(c, n);
+      int setId = int.parse(splitSet[0]);
+      int id = int.parse(splitSet[1]);
+      int number = (splitNumber.length == 2) ? int.parse(splitNumber[1]) : 1;
+
+      Card card = await _cardService.getById(setId, id);
+      return MapEntry<Card, int>(card, number);
     });
-    return Map.fromEntries(await Future.wait(p));
+    return Map.fromEntries(await Future.wait(decodedCardsFutures));
   }
 }
