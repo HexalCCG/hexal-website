@@ -184,11 +184,14 @@ class CardService {
   }
 
   static int compareCards(Card a, Card b) {
-    int c;
+    int setDiff = a.setId.compareTo(b.setId);
+    if (setDiff != 0) {
+      return setDiff;
+    }
 
-    c = a.element.index.compareTo(b.element.index);
-    if (c != 0) {
-      return c;
+    int elementDiff = a.element.index.compareTo(b.element.index);
+    if (elementDiff != 0) {
+      return elementDiff;
     }
 
     if ((a.type == Type.hero) && !(b.type == Type.hero)) {
@@ -197,9 +200,9 @@ class CardService {
       return -1;
     }
 
-    c = a.totalCost.compareTo(b.totalCost);
-    if (c != 0) {
-      return c;
+    int costDiff = a.totalCost.compareTo(b.totalCost);
+    if (costDiff != 0) {
+      return costDiff;
     }
 
     return a.name.compareTo(b.name);
