@@ -171,13 +171,13 @@ class BuilderComponent implements OnInit {
 
   void exportCode() {
     if (deckCards.isNotEmpty) {
-      codeBox = _deckService.generateCode(deckCards);
+      codeBox = _deckService.encodeDeck(deckCards);
     }
   }
 
   void generatePdf() {
     if (deckCards.isNotEmpty) {
-      String c = _deckService.generateCode(deckCards);
+      String c = _deckService.encodeDeck(deckCards);
       _router.navigate(Routes.pdf.toUrl({"deck": '$c'}));
     }
   }
