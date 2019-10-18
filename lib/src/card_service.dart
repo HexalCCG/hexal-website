@@ -46,7 +46,7 @@ class CardService {
         name: data[2],
         element: elementFromString(data[3].toLowerCase()),
         type: typeFromString(data[4].toLowerCase()),
-        cardDuration: durationFromString(data[5].toLowerCase()),
+        speed: speedFromString(data[5].toLowerCase()),
         cost: costFromString(data[6]),
         attack: (data[7] == "") ? null : data[7],
         health: (data[8] == "") ? null : data[8],
@@ -122,27 +122,26 @@ class CardService {
     }
   }
 
-  static CardDuration durationFromString(String s) {
+  static Speed speedFromString(String s) {
     switch (s) {
+      case "":
+        return Speed.none;
+        break;
       case "reaction":
-        return CardDuration.reaction;
+        return Speed.instant;
         break;
-      case "enchantment":
-        return CardDuration.enchantment;
-        break;
-      case "equipment":
-        return CardDuration.equipment;
+      case "equip":
+        return Speed.equip;
         break;
       case "field":
-        return CardDuration.field;
+        return Speed.field;
         break;
       case "permanent":
-        return CardDuration.permanent;
+        return Speed.permanent;
         break;
-      case "none":
-      case "":
       default:
-        return CardDuration.none;
+        return Speed.none;
+        break;
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 
 enum Element { fire, earth, air, water, spirit, any }
 enum Type { creature, spell, item, hero, token }
-enum CardDuration { none, reaction, enchantment, equipment, field, permanent }
+enum Speed { none, instant, equip, field, permanent }
 
 class Card {
   Card(
@@ -14,7 +14,7 @@ class Card {
       @required this.name,
       @required this.element,
       @required this.type,
-      @required this.cardDuration,
+      @required this.speed,
       @required this.cost,
       @required this.attack,
       @required this.health,
@@ -27,7 +27,7 @@ class Card {
   final String name;
   final Element element;
   final Type type;
-  final CardDuration cardDuration;
+  final Speed speed;
   final Map<Element, int> cost;
   final int totalCost;
   final int attack;
@@ -37,8 +37,8 @@ class Card {
   String get typeLine {
     String r;
     r = Localisation.type[type];
-    if (cardDuration != CardDuration.none) {
-      r += " - " + Localisation.cardDuration[cardDuration];
+    if (speed != Speed.none) {
+      r += " - " + Localisation.speed(speed, type);
     }
     return r;
   }

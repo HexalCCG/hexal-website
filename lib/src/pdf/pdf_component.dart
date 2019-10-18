@@ -186,11 +186,11 @@ class PdfComponent implements OnActivate {
             )),
         Positioned(
             left: 2 * mm,
-            top: 54.2 * mm,
+            top: 54.1 * mm,
             child: Text(card.typeLine, style: typeLine)),
         Positioned(
           right: 2 * mm,
-          top: 54 * mm,
+          top: 54.1 * mm,
           child: Text(card.cardIdText, style: id),
         ),
         Positioned(
