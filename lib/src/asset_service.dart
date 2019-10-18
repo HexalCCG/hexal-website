@@ -24,7 +24,7 @@ class AssetService {
     Element.air: "assets/card-frames/air.png",
     Element.earth: "assets/card-frames/earth.png",
     Element.water: "assets/card-frames/water.png",
-    Element.any: "assets/card-frames/any.png",
+    Element.any: "assets/card-frames/neutral.png",
   };
 
   Map<String, Future<Image>> imageMap = Map<String, Future<Image>>();
