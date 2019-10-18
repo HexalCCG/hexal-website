@@ -20,7 +20,7 @@ class Localisation {
   };
   static Map cardDuration = {
     CardDuration.none: "",
-    CardDuration.reaction: "Reaction",
+    CardDuration.reaction: "Instant",
     CardDuration.enchantment: "Enchantment",
     CardDuration.equipment: "Equipment",
     CardDuration.field: "Field",
