@@ -27,6 +27,8 @@ class PdfService {
   static TextStyle keyword;
   static TextStyle statsLine;
 
+  
+
   static Future<Document> buildPdf(
       {@required String name, @required List<Card> cards}) async {
     Document pdf = Document(title: name);

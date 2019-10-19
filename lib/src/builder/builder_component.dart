@@ -18,11 +18,7 @@ import '../routes.dart';
   templateUrl: 'builder_component.html',
   styleUrls: ['builder_component.css'],
   directives: [coreDirectives, routerDirectives, formDirectives],
-  providers: [
-    ClassProvider(CardService),
-    ClassProvider(DeckService),
-    ClassProvider(AssetService)
-  ],
+  providers: [],
   pipes: [commonPipes],
   exports: [Routes, AssetService],
 )
@@ -44,7 +40,7 @@ class BuilderComponent implements OnInit {
   bool sortById = false;
 
   Future<void> ngOnInit() async {
-    allCards = await _cardService.getAll();
+    allCards = await CardService.getAll();
     filterLibrary();
   }
 
@@ -165,19 +161,19 @@ class BuilderComponent implements OnInit {
 
   void importCode() async {
     if (codeBox != "") {
-      deckCards = await _deckService.decodeDeck(codeBox);
+      deckCards = await DeckService.decodeDeck(codeBox);
     }
   }
 
   void exportCode() {
     if (deckCards.isNotEmpty) {
-      codeBox = _deckService.encodeDeck(deckCards);
+      codeBox = DeckService.encodeDeck(deckCards);
     }
   }
 
   void generatePdf() {
     if (deckCards.isNotEmpty) {
-      String c = _deckService.encodeDeck(deckCards);
+      String c = DeckService.encodeDeck(deckCards);
       _router.navigate(Routes.pdf.toUrl({"deck": '$c'}));
     }
   }

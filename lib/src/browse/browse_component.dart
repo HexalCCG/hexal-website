@@ -1,8 +1,8 @@
 import 'package:angular/angular.dart';
 import 'package:angular_forms/angular_forms.dart';
 import 'package:angular_router/angular_router.dart';
+import 'package:open_card_game/src/asset_service.dart';
 
-import '../asset_service.dart';
 import '../card.dart';
 import '../card_service.dart';
 import '../routes.dart';
@@ -14,13 +14,11 @@ export '../routes.dart';
   templateUrl: 'browse_component.html',
   styleUrls: ['browse_component.css'],
   directives: [coreDirectives, routerDirectives, formDirectives],
-  providers: [ClassProvider(CardService), ClassProvider(AssetService)],
+  providers: [],
   exports: [Routes, AssetService],
 )
 class BrowseComponent implements OnInit {
-  final CardService _cardService;
-
-  BrowseComponent(this._cardService);
+  BrowseComponent();
 
   String searchBox = "";
   String selectedElement;
@@ -30,7 +28,7 @@ class BrowseComponent implements OnInit {
   List<Card> cards;
 
   Future<void> ngOnInit() async {
-    allCards = await _cardService.getAll();
+    allCards = await CardService.getAll();
     filter();
   }
 

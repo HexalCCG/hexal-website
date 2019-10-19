@@ -33,7 +33,7 @@ class Routes {
     component: rules_template.RulesComponentNgFactory,
   );
   static final info = RouteDefinition(
-    routePath: RoutePath(path: 'inffo'),
+    routePath: RoutePath(path: 'info'),
     component: info_template.InfoComponentNgFactory,
   );
 
