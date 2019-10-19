@@ -6,12 +6,10 @@ import 'package:open_card_game/src/asset_service.dart';
 import 'card.dart';
 
 class CardService {
-  CardService(this._assetService);
-  final AssetService _assetService;
-  Future<List<Card>> _cardList;
+  static Future<List<Card>> _cardList;
 
-  Future<List<Card>> loadCards() async {
-    List<String> data = await _assetService.loadAllSets();
+  static Future<List<Card>> loadCards() async {
+    List<String> data = await AssetService.loadAllSets();
     List<Card> cards = List<Card>();
 
     for (int i = 0; i < data.length; i++) {
@@ -24,14 +22,14 @@ class CardService {
     return cards;
   }
 
-  Future<List<Card>> getAll() async {
+  static Future<List<Card>> getAll() async {
     if (_cardList == null) {
       _cardList = loadCards();
     }
     return _cardList;
   }
 
-  Future<Card> getById(int setId, int id) async {
+  static Future<Card> getById(int setId, int id) async {
     List<Card> list = await getAll();
     return list.singleWhere((Card card) {
       return card.id == id && card.setId == setId;

@@ -27,9 +27,9 @@ class AssetService {
     Element.any: "assets/card-frames/neutral.png",
   };
 
-  Map<String, Future<Image>> imageMap = Map<String, Future<Image>>();
-  Map<String, Future<Font>> fontMap = Map<String, Future<Font>>();
-  Map<int, Future<String>> setMap = Map<int, Future<String>>();
+  static Map<String, Future<Image>> imageMap = Map<String, Future<Image>>();
+  static Map<String, Future<Font>> fontMap = Map<String, Future<Font>>();
+  static Map<int, Future<String>> setMap = Map<int, Future<String>>();
 
   static String setLocation(int id) {
     return "assets/data/set-" + id.toString().padLeft(2, '0') + ".csv";
@@ -43,21 +43,21 @@ class AssetService {
         ".png";
   }
 
-  Future<String> loadSet(int setId) {
+  static Future<String> loadSet(int setId) {
     if (!setMap.containsKey(setId)) {
       setMap[setId] = read(setLocation(setId));
     }
     return setMap[setId];
   }
 
-  Future<List<String>> loadAllSets() {
+  static Future<List<String>> loadAllSets() {
     for (int i = 0; i <= maxSet; i++) {
       loadSet(i);
     }
     return Future.wait(setMap.values);
   }
 
-  Future<Image> loadImage(String location) {
+  static Future<Image> loadImage(String location) {
     if (!imageMap.containsKey(location)) {
       imageMap[location] =
           readBytes(location).then((data) => decodeImage(data));
@@ -65,7 +65,7 @@ class AssetService {
     return imageMap[location];
   }
 
-  Future<Font> loadFont(String location) {
+  static Future<Font> loadFont(String location) {
     if (!fontMap.containsKey(location)) {
       fontMap[location] = readBytes(location)
           .then((data) => Font.ttf(data.buffer.asByteData()));
