@@ -2,8 +2,6 @@ import 'dart:html' hide Location;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:angular/security.dart';
-
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:open_card_game/src/pdf_service.dart';
@@ -22,8 +20,8 @@ import '../routes.dart';
   pipes: [commonPipes],
   exports: [Routes],
 )
-class PdfComponent implements OnActivate {
-  PdfComponent();
+class PdfMenuComponent implements OnActivate {
+  PdfMenuComponent();
 
   @override
   void onActivate(_, RouterState current) async {
