@@ -7,6 +7,7 @@ import 'pdf_menu/pdf_menu_component.template.dart' as pdf_menu_template;
 import 'browse/browse_component.template.dart' as browse_template;
 import 'rules/rules_component.template.dart' as rules_template;
 import 'info/info_component.template.dart' as info_template;
+import 'download/download_component.template.dart' as download_template;
 
 class Routes {
   static final default_path = RouteDefinition.redirect(
@@ -22,7 +23,7 @@ class Routes {
     component: builder_template.BuilderComponentNgFactory,
   );
   static final pdf_menu = RouteDefinition(
-    routePath: RoutePath(path: 'pdf_generator'),
+    routePath: RoutePath(path: 'pdfmenu'),
     component: pdf_menu_template.PdfMenuComponentNgFactory,
   );
   static final pdf = RouteDefinition(
@@ -41,6 +42,10 @@ class Routes {
     routePath: RoutePath(path: 'info'),
     component: info_template.InfoComponentNgFactory,
   );
+  static final download = RouteDefinition(
+    routePath: RoutePath(path: 'download'),
+    component: download_template.InfoComponentNgFactory,
+  );
 
   static final all = <RouteDefinition>[
     default_path,
@@ -49,6 +54,7 @@ class Routes {
     pdf,
     browse,
     rules,
-    info
+    info,
+    download,
   ];
 }

@@ -23,10 +23,8 @@ import '../routes.dart';
   exports: [Routes, AssetService],
 )
 class BuilderComponent implements OnInit {
-  final CardService _cardService;
-  final DeckService _deckService;
   final Router _router;
-  BuilderComponent(this._cardService, this._deckService, this._router);
+  BuilderComponent(this._router);
 
   List<Card> allCards;
   Card selected;
