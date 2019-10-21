@@ -27,8 +27,6 @@ class PdfService {
   static TextStyle keyword;
   static TextStyle statsLine;
 
-  
-
   static Future<Document> buildPdf(
       {@required String name, @required List<Card> cards}) async {
     Document pdf = Document(title: name);
@@ -60,9 +58,10 @@ class PdfService {
         TextStyle(font: await firaSemiBold, lineSpacing: 1, fontSize: 7);
     statsLine ??= TextStyle(font: await firaBold, fontSize: 14);
 
-    List<Widget> cardWidgets = await Future.wait(cards
-        .map((Card card) => _buildCard(document, card))
-        .toList(growable: true));
+    List<Widget> cardWidgets = List.from(
+        await Future.wait(cards.map((Card card) => _buildCard(document, card))),
+        growable: true);
+
     while (cardWidgets.length < 9) {
       cardWidgets.add(
         SizedBox(
@@ -107,6 +106,9 @@ class PdfService {
       width: cardWidth,
       child: Stack(
         children: [
+          Image(
+            await _buildImage(document, AssetService.frameImages[card.element]),
+          ),
           Stack(
             children: [
               Positioned(
@@ -165,9 +167,6 @@ class PdfService {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [Text(card.statsLine, style: statsLine)]))
             ],
-          ),
-          Image(
-            await _buildImage(document, AssetService.frameImages[card.element]),
           ),
         ],
       ),
