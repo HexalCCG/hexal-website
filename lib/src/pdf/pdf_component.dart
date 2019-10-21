@@ -23,20 +23,37 @@ import '../routes.dart';
 class PdfComponent implements OnActivate {
   PdfComponent();
 
+  int complete = 0;
+  int total = 0;
+
   @override
   void onActivate(_, RouterState current) async {
     List<Card> cardList = await DeckService.unmap(
         await DeckService.decodeDeck(current.parameters['deck']));
 
-    Document a = await PdfService.buildPdf(name: "Name", cards: cardList);
+    Document pdf = Document(title: "Hexal Deck");
 
-    final String raw = base64.encode(a.save());
+    List<List<Card>> cardPages = PdfService.paginateCardList(cardList);
+    total = cardPages.length;
+    List<Page> pages =
+        await Future.wait(cardPages.map<Future<Page>>((List<Card> cards) {
+      return PdfService.pageFromCards(pdf.document, cards)
+        ..then((i) {
+          complete += 1;
+        });
+    }));
+
+    pages.forEach((Page page) {
+      pdf.addPage(page);
+    });
+
+    final String raw = base64.encode(pdf.save());
 
     final List<int> intList = base64.decode(raw);
     final Int8List int8array = Int8List.fromList(intList);
-    final Blob b = Blob([int8array], 'application/pdf');
+    final Blob blob = Blob([int8array], 'application/pdf');
 
-    String url = Url.createObjectUrlFromBlob(b);
+    String url = Url.createObjectUrlFromBlob(blob);
 
     AnchorElement link = AnchorElement()
       ..href = url

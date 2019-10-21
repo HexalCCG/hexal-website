@@ -67,15 +67,4 @@ class DeckService {
     });
     return r;
   }
-
-  /*
-  List<Card> cardList = await CardService.getAll();
-    Map<Card, int> deck =
-        Map.fromEntries(cardList.map<MapEntry<Card, int>>((Card card) {
-      int number = (card.type == Type.hero) ? 2 : 1;
-      return MapEntry<Card, int>(card, number);
-    }));
-    String code = DeckService.encodeDeck(deck);
-    //await _router.navigate(Routes.pdf.toUrl({"deck": '$code'}));
-    */
 }

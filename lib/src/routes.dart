@@ -3,7 +3,6 @@ import 'package:angular_router/angular_router.dart';
 import 'menu/menu_component.template.dart' as menu_template;
 import 'builder/builder_component.template.dart' as builder_template;
 import 'pdf/pdf_component.template.dart' as pdf_template;
-import 'pdf_menu/pdf_menu_component.template.dart' as pdf_menu_template;
 import 'browse/browse_component.template.dart' as browse_template;
 import 'rules/rules_component.template.dart' as rules_template;
 import 'info/info_component.template.dart' as info_template;
@@ -21,10 +20,6 @@ class Routes {
   static final builder = RouteDefinition(
     routePath: RoutePath(path: 'builder'),
     component: builder_template.BuilderComponentNgFactory,
-  );
-  static final pdf_menu = RouteDefinition(
-    routePath: RoutePath(path: 'pdfmenu'),
-    component: pdf_menu_template.PdfMenuComponentNgFactory,
   );
   static final pdf = RouteDefinition(
     routePath: RoutePath(path: 'pdf/:deck'),
@@ -44,7 +39,7 @@ class Routes {
   );
   static final download = RouteDefinition(
     routePath: RoutePath(path: 'download'),
-    component: download_template.InfoComponentNgFactory,
+    component: download_template.DownloadComponentNgFactory,
   );
 
   static final all = <RouteDefinition>[
