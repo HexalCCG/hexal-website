@@ -125,7 +125,7 @@ class CardService {
       case "":
         return Speed.none;
         break;
-      case "reaction":
+      case "instant":
         return Speed.instant;
         break;
       case "equip":
