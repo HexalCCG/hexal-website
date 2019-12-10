@@ -51,7 +51,7 @@ class AssetService {
   }
 
   static Future<List<String>> loadAllSets() {
-    for (int i = 0; i <= maxSet; i++) {
+    for (var i = 0; i <= maxSet; i++) {
       loadSet(i);
     }
     return Future.wait(setMap.values);

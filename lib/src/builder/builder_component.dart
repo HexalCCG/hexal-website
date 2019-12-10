@@ -32,18 +32,19 @@ class BuilderComponent implements OnInit {
   List<Card> libraryCards;
   Map<Card, int> deckCards = SplayTreeMap<Card, int>(CardService.compareCards);
 
-  String codeBox = "";
-  String searchBox = "";
+  String codeBox = '';
+  String searchBox = '';
   bool deckCardLimit = true;
   bool sortById = false;
 
+  @override
   Future<void> ngOnInit() async {
     allCards = await CardService.getAll();
     filterLibrary();
   }
 
   int nextMultiple(int n) {
-    int multiple = 9;
+    var multiple = 9;
     return (n / multiple).ceil() * multiple;
   }
 
@@ -112,10 +113,10 @@ class BuilderComponent implements OnInit {
   }
 
   void toggleSetting(String setting) {
-    if (setting == "cardlimit") {
+    if (setting == 'cardlimit') {
       deckCardLimit = !deckCardLimit;
     }
-    if (setting == "sortId") {
+    if (setting == 'sortId') {
       sortById = !sortById;
       filterLibrary();
     }
@@ -131,13 +132,13 @@ class BuilderComponent implements OnInit {
   }
 
   void filterLibrary() {
-    libraryCards = List<Card>()..addAll(allCards);
+    libraryCards = <Card>[...allCards];
     if (selectedElement != null) {
       libraryCards.retainWhere((Card card) {
         return card.element == CardService.elementFromString(selectedElement);
       });
     }
-    if (searchBox != "") {
+    if (searchBox != '') {
       libraryCards.retainWhere((Card card) {
         return card.searchableText
             .toLowerCase()
@@ -153,12 +154,12 @@ class BuilderComponent implements OnInit {
   }
 
   void clearDeck() {
-    deckCards = Map<Card, int>();
-    codeBox = "";
+    deckCards = <Card, int>{};
+    codeBox = '';
   }
 
   void importCode() async {
-    if (codeBox != "") {
+    if (codeBox != '') {
       deckCards = await DeckService.decodeDeck(codeBox);
     }
   }
@@ -171,8 +172,8 @@ class BuilderComponent implements OnInit {
 
   void generatePdf() {
     if (deckCards.isNotEmpty) {
-      String c = DeckService.encodeDeck(deckCards);
-      _router.navigate(Routes.pdf.toUrl({"deck": '$c'}));
+      var c = DeckService.encodeDeck(deckCards);
+      _router.navigate(Routes.pdf.toUrl({'deck': '$c'}));
     }
   }
 }

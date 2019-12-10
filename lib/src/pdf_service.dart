@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:meta/meta.dart';
-import 'package:image/src/image.dart' as img;
 import 'package:open_card_game/src/asset_service.dart';
 import 'package:open_card_game/src/card.dart';
 import 'package:open_card_game/src/card_service.dart';
@@ -29,10 +28,9 @@ class PdfService {
 
   static Future<Document> buildPdf(
       {@required String name, @required List<Card> cards}) async {
-    Document pdf = Document(title: name);
-    List<Page> pages = await Future.wait(paginateCardList(cards)
-        .map<Future<Page>>(
-            (List<Card> cards) => pageFromCards(pdf.document, cards)));
+    var pdf = Document(title: name);
+    var pages = await Future.wait(paginateCardList(cards).map<Future<Page>>(
+        (List<Card> cards) => pageFromCards(pdf.document, cards)));
     pages.forEach((Page page) => pdf.addPage(page));
     return pdf;
   }
@@ -45,10 +43,10 @@ class PdfService {
 
   static Future<Page> pageFromCards(
       PdfDocument document, List<Card> cards) async {
-    firaRegular ??= AssetService.loadFont("assets/fonts/FiraSans-Regular.ttf");
+    firaRegular ??= AssetService.loadFont('assets/fonts/FiraSans-Regular.ttf');
     firaSemiBold ??=
-        AssetService.loadFont("assets/fonts/FiraSans-SemiBold.ttf");
-    firaBold ??= AssetService.loadFont("assets/fonts/FiraSans-Bold.ttf");
+        AssetService.loadFont('assets/fonts/FiraSans-SemiBold.ttf');
+    firaBold ??= AssetService.loadFont('assets/fonts/FiraSans-Bold.ttf');
     title ??= TextStyle(font: await firaRegular, fontSize: 12);
     typeLine ??= TextStyle(font: await firaRegular, fontSize: 8);
     id ??= TextStyle(font: await firaRegular, fontSize: 7);
@@ -58,7 +56,7 @@ class PdfService {
         TextStyle(font: await firaSemiBold, lineSpacing: 1, fontSize: 7);
     statsLine ??= TextStyle(font: await firaBold, fontSize: 14);
 
-    List<Widget> cardWidgets = List.from(
+    var cardWidgets = List.from(
         await Future.wait(cards.map((Card card) => _buildCard(document, card))),
         growable: true);
 
@@ -176,7 +174,7 @@ class PdfService {
   // Expanded cost row
   static Future<List<Widget>> _buildCostRow(
       PdfDocument document, Map<Element, int> cost) async {
-    Iterable<Future<List<Widget>>> a = cost.keys.map((key) async {
+    var a = cost.keys.map((key) async {
       return await Future.wait(
         List.generate(cost[key], (int i) async {
           return SizedBox(
@@ -189,30 +187,30 @@ class PdfService {
         }),
       );
     });
-    List<List<Widget>> b = await Future.wait(a);
+    var b = await Future.wait(a);
     return b.expand((pair) => pair).toList();
   }
 
   static Future<RichText> _buildCardText(
       PdfDocument document, String text) async {
-    List<InlineSpan> result = List<InlineSpan>();
+    var result = <InlineSpan>[];
 
-    int p = 0;
+    var p = 0;
 
-    for (int i = 0; i < text.length; i++) {
-      if (text[i] == "<" || text[i] == "[") {
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] == '<' || text[i] == '[') {
         if (i > p) {
           result.add(TextSpan(text: text.substring(p, i)));
         }
         p = i + 1;
       }
-      if (text[i] == ">") {
+      if (text[i] == '>') {
         if (i > p) {
           result.add(TextSpan(text: text.substring(p, i), style: keyword));
         }
         p = i + 1;
       }
-      if (text[i] == "]") {
+      if (text[i] == ']') {
         if (i > p) {
           result.add(
             WidgetSpan(
@@ -239,7 +237,7 @@ class PdfService {
 
   static Future<PdfImage> _buildImage(
       PdfDocument document, String location) async {
-    img.Image image = await AssetService.loadImage(location);
+    var image = await AssetService.loadImage(location);
     return PdfImage(document,
         image: image.data.buffer.asUint8List(),
         width: image.width,

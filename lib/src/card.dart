@@ -38,7 +38,7 @@ class Card {
     String r;
     r = Localisation.type[type];
     if (speed != Speed.none) {
-      r += " - " + Localisation.speed(speed, type);
+      r += ' - ' + Localisation.speed(speed, type);
     }
     return r;
   }
@@ -46,14 +46,14 @@ class Card {
   String get statsLine {
     if (attack != null && health != null) {
       if (type == Type.creature || type == Type.token) {
-        return attack.toString() + " / " + health.toString();
+        return attack.toString() + ' / ' + health.toString();
       } else {
-        return (attack >= 0 ? "+" + attack.toString() : attack.toString()) +
-            " / " +
-            (health >= 0 ? "+" + health.toString() : health.toString());
+        return (attack >= 0 ? '+' + attack.toString() : attack.toString()) +
+            ' / ' +
+            (health >= 0 ? '+' + health.toString() : health.toString());
       }
     } else {
-      return "";
+      return '';
     }
   }
 
@@ -66,19 +66,19 @@ class Card {
   }
 
   String get paddedId {
-    return id.toString().padLeft(3, "0");
+    return id.toString().padLeft(3, '0');
   }
 
   String get cardIdText {
-    return "[" +
+    return '[' +
         setId.toString() +
-        "." +
+        '.' +
         paddedId +
-        "]" +
-        (version > 1 ? ("." + version.toString()) : "");
+        ']' +
+        (version > 1 ? ('.' + version.toString()) : '');
   }
 
   String get searchableText {
-    return paddedId + " " + name + " " + typeLine + " " + text;
+    return paddedId + ' ' + name + ' ' + typeLine + ' ' + text;
   }
 }

@@ -28,14 +28,14 @@ class PdfComponent implements OnActivate {
 
   @override
   void onActivate(_, RouterState current) async {
-    List<Card> cardList = await DeckService.unmap(
+    var cardList = await DeckService.unmap(
         await DeckService.decodeDeck(current.parameters['deck']));
 
-    Document pdf = Document(title: "Hexal Deck");
+    var pdf = Document(title: 'Hexal Deck');
 
-    List<List<Card>> cardPages = PdfService.paginateCardList(cardList);
+    var cardPages = PdfService.paginateCardList(cardList);
     total = cardPages.length;
-    List<Page> pages =
+    var pages =
         await Future.wait(cardPages.map<Future<Page>>((List<Card> cards) {
       return PdfService.pageFromCards(pdf.document, cards)
         ..then((i) {
@@ -47,15 +47,15 @@ class PdfComponent implements OnActivate {
       pdf.addPage(page);
     });
 
-    final String raw = base64.encode(pdf.save());
+    final raw = base64.encode(pdf.save());
 
     final List<int> intList = base64.decode(raw);
-    final Int8List int8array = Int8List.fromList(intList);
-    final Blob blob = Blob([int8array], 'application/pdf');
+    final int8array = Int8List.fromList(intList);
+    final blob = Blob([int8array], 'application/pdf');
 
-    String url = Url.createObjectUrlFromBlob(blob);
+    final url = Url.createObjectUrlFromBlob(blob);
 
-    AnchorElement link = AnchorElement()
+    final link = AnchorElement()
       ..href = url
       ..download = 'hexal_deck.pdf'
       ..text = 'Download';

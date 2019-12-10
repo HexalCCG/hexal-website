@@ -21,21 +21,20 @@ class DownloadComponent {
   final Router _router;
   DownloadComponent(this._router);
 
-  String codeBox = "";
+  String codeBox = '';
 
   void onSubmit() {
     //TODO Validate deck code
-    _router.navigate(Routes.pdf.toUrl({"deck": '$codeBox'}));
+    _router.navigate(Routes.pdf.toUrl({'deck': '$codeBox'}));
   }
 
   void onSubmitAll() async {
-    List<Card> cardList = await CardService.getAll();
-    Map<Card, int> deck =
-        Map.fromEntries(cardList.map<MapEntry<Card, int>>((Card card) {
-      int number = (card.type == Type.hero) ? 2 : 1;
+    var cardList = await CardService.getAll();
+    var deck = Map.fromEntries(cardList.map<MapEntry<Card, int>>((Card card) {
+      var number = (card.type == Type.hero) ? 2 : 1;
       return MapEntry<Card, int>(card, number);
     }));
-    String code = DeckService.encodeDeck(deck);
-    await _router.navigate(Routes.pdf.toUrl({"deck": '$code'}));
+    var code = DeckService.encodeDeck(deck);
+    await _router.navigate(Routes.pdf.toUrl({'deck': '$code'}));
   }
 }

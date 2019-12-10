@@ -9,12 +9,11 @@ class CardService {
   static Future<List<Card>> _cardList;
 
   static Future<List<Card>> loadCards() async {
-    List<String> data = await AssetService.loadAllSets();
-    List<Card> cards = List<Card>();
+    var data = await AssetService.loadAllSets();
+    var cards = <Card>[];
 
-    for (int i = 0; i < data.length; i++) {
-      List<List<dynamic>> rows =
-          const CsvToListConverter().convert(data[i]).skip(1).toList();
+    for (var i = 0; i < data.length; i++) {
+      var rows = const CsvToListConverter().convert(data[i]).skip(1).toList();
       cards.addAll(rows.map((List<dynamic> rowData) {
         return parseRowData(rowData, i);
       }));
@@ -23,14 +22,12 @@ class CardService {
   }
 
   static Future<List<Card>> getAll() async {
-    if (_cardList == null) {
-      _cardList = loadCards();
-    }
+    _cardList ??= loadCards();
     return _cardList;
   }
 
   static Future<Card> getById(int setId, int id) async {
-    List<Card> list = await getAll();
+    var list = await getAll();
     return list.singleWhere((Card card) {
       return card.id == id && card.setId == setId;
     });
@@ -46,27 +43,27 @@ class CardService {
         type: typeFromString(data[4].toLowerCase()),
         speed: speedFromString(data[5].toLowerCase()),
         cost: costFromString(data[6]),
-        attack: (data[7] == "") ? null : data[7],
-        health: (data[8] == "") ? null : data[8],
+        attack: (data[7] == '') ? null : data[7],
+        health: (data[8] == '') ? null : data[8],
         text: data[9]);
   }
 
   static String stringToElement(Element e) {
     switch (e) {
       case Element.fire:
-        return "fire";
+        return 'fire';
         break;
       case Element.earth:
-        return "earth";
+        return 'earth';
         break;
       case Element.air:
-        return "air";
+        return 'air';
         break;
       case Element.water:
-        return "water";
+        return 'water';
         break;
       case Element.spirit:
-        return "spirit";
+        return 'spirit';
         break;
       default:
         return null;
@@ -75,22 +72,22 @@ class CardService {
 
   static Element elementFromString(String s) {
     switch (s) {
-      case "fire":
+      case 'fire':
         return Element.fire;
         break;
-      case "earth":
+      case 'earth':
         return Element.earth;
         break;
-      case "air":
+      case 'air':
         return Element.air;
         break;
-      case "water":
+      case 'water':
         return Element.water;
         break;
-      case "spirit":
+      case 'spirit':
         return Element.spirit;
         break;
-      case "any":
+      case 'any':
         return Element.any;
         break;
       default:
@@ -100,19 +97,19 @@ class CardService {
 
   static Type typeFromString(String s) {
     switch (s) {
-      case "creature":
+      case 'creature':
         return Type.creature;
         break;
-      case "spell":
+      case 'spell':
         return Type.spell;
         break;
-      case "item":
+      case 'item':
         return Type.item;
         break;
-      case "hero":
+      case 'hero':
         return Type.hero;
         break;
-      case "token":
+      case 'token':
         return Type.token;
         break;
       default:
@@ -122,19 +119,19 @@ class CardService {
 
   static Speed speedFromString(String s) {
     switch (s) {
-      case "":
+      case '':
         return Speed.none;
         break;
-      case "instant":
+      case 'instant':
         return Speed.instant;
         break;
-      case "equip":
+      case 'equip':
         return Speed.equip;
         break;
-      case "field":
+      case 'field':
         return Speed.field;
         break;
-      case "permanent":
+      case 'permanent':
         return Speed.permanent;
         break;
       default:
@@ -144,12 +141,12 @@ class CardService {
   }
 
   static Map<Element, int> costFromString(String s) {
-    Map<Element, int> result = Map<Element, int>();
-    if (s != "") {
-      List<String> list = s.split(".");
+    var result = <Element, int>{};
+    if (s != '') {
+      var list = s.split('.');
       list.forEach((item) {
-        Element e = parseElementLetter(item.substring(item.length - 1));
-        int n = int.parse(item.substring(0, item.length - 1));
+        var e = parseElementLetter(item.substring(item.length - 1));
+        var n = int.parse(item.substring(0, item.length - 1));
         result[e] = n;
       });
     }
@@ -158,22 +155,22 @@ class CardService {
 
   static Element parseElementLetter(String letter) {
     switch (letter) {
-      case "s":
+      case 's':
         return Element.spirit;
         break;
-      case "r":
+      case 'r':
         return Element.any;
         break;
-      case "a":
+      case 'a':
         return Element.air;
         break;
-      case "w":
+      case 'w':
         return Element.water;
         break;
-      case "f":
+      case 'f':
         return Element.fire;
         break;
-      case "e":
+      case 'e':
         return Element.earth;
         break;
       default:
@@ -182,12 +179,12 @@ class CardService {
   }
 
   static int compareCards(Card a, Card b) {
-    int setDiff = a.setId.compareTo(b.setId);
+    var setDiff = a.setId.compareTo(b.setId);
     if (setDiff != 0) {
       return setDiff;
     }
 
-    int elementDiff = a.element.index.compareTo(b.element.index);
+    var elementDiff = a.element.index.compareTo(b.element.index);
     if (elementDiff != 0) {
       return elementDiff;
     }
@@ -198,7 +195,7 @@ class CardService {
       return -1;
     }
 
-    int costDiff = a.totalCost.compareTo(b.totalCost);
+    var costDiff = a.totalCost.compareTo(b.totalCost);
     if (costDiff != 0) {
       return costDiff;
     }

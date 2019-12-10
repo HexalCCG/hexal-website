@@ -20,13 +20,14 @@ export '../routes.dart';
 class BrowseComponent implements OnInit {
   BrowseComponent();
 
-  String searchBox = "";
+  String searchBox = '';
   String selectedElement;
   int selectedMana;
 
   List<Card> allCards;
   List<Card> cards;
 
+  @override
   Future<void> ngOnInit() async {
     allCards = await CardService.getAll();
     filter();
@@ -51,7 +52,7 @@ class BrowseComponent implements OnInit {
   }
 
   void filter() {
-    cards = List<Card>()..addAll(allCards);
+    cards = <Card>[...allCards];
     if (selectedElement != null) {
       cards.retainWhere((Card card) {
         return card.element == CardService.elementFromString(selectedElement);
@@ -62,7 +63,7 @@ class BrowseComponent implements OnInit {
         return card.totalCost == selectedMana;
       });
     }
-    if (searchBox != "") {
+    if (searchBox != '') {
       cards.retainWhere((Card card) {
         return card.searchableText
             .toLowerCase()
