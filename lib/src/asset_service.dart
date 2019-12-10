@@ -10,37 +10,37 @@ class AssetService {
   static const maxSet = 1;
 
   static const Map<Element, String> elementImages = {
-    Element.spirit: "assets/icons/element-spirit.png",
-    Element.fire: "assets/icons/element-fire.png",
-    Element.air: "assets/icons/element-air.png",
-    Element.earth: "assets/icons/element-earth.png",
-    Element.water: "assets/icons/element-water.png",
-    Element.any: "assets/icons/element-any.png",
+    Element.spirit: 'assets/icons/element-spirit.png',
+    Element.fire: 'assets/icons/element-fire.png',
+    Element.air: 'assets/icons/element-air.png',
+    Element.earth: 'assets/icons/element-earth.png',
+    Element.water: 'assets/icons/element-water.png',
+    Element.any: 'assets/icons/element-any.png',
   };
 
   static const Map<Element, String> frameImages = {
-    Element.spirit: "assets/card-frames/spirit.png",
-    Element.fire: "assets/card-frames/fire.png",
-    Element.air: "assets/card-frames/air.png",
-    Element.earth: "assets/card-frames/earth.png",
-    Element.water: "assets/card-frames/water.png",
-    Element.any: "assets/card-frames/neutral.png",
+    Element.spirit: 'assets/card-frames/spirit.png',
+    Element.fire: 'assets/card-frames/fire.png',
+    Element.air: 'assets/card-frames/air.png',
+    Element.earth: 'assets/card-frames/earth.png',
+    Element.water: 'assets/card-frames/water.png',
+    Element.any: 'assets/card-frames/neutral.png',
   };
 
-  static Map<String, Future<Image>> imageMap = Map<String, Future<Image>>();
-  static Map<String, Future<Font>> fontMap = Map<String, Future<Font>>();
-  static Map<int, Future<String>> setMap = Map<int, Future<String>>();
+  static Map<String, Future<Image>> imageMap = <String, Future<Image>>{};
+  static Map<String, Future<Font>> fontMap = <String, Future<Font>>{};
+  static Map<int, Future<String>> setMap = <int, Future<String>>{};
 
   static String setLocation(int id) {
-    return "assets/data/set-" + id.toString().padLeft(2, '0') + ".csv";
+    return 'assets/data/set-' + id.toString().padLeft(2, '0') + '.csv';
   }
 
   static String cardImage(int setId, int id) {
-    return "assets/card-images/full/set-" +
+    return 'assets/card-images/full/set-' +
         setId.toString().padLeft(2, '0') +
-        "/" +
+        '/' +
         id.toString().padLeft(3, '0') +
-        ".png";
+        '.png';
   }
 
   static Future<String> loadSet(int setId) {
